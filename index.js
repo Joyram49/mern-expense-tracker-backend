@@ -17,14 +17,28 @@ require("dotenv").config({ path: "./.env" });
 const port = process.env.PORT || 5000;
 
 // database connection with mongoose
-mongoose.set("strictQuery", false);
-mongoose
-  .connect(process.env.ATLAS_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("database connected successfully"))
-  .catch((err) => console.log(err));
+// mongoose.set("strictQuery", false);
+// mongoose
+//   .connect(process.env.ATLAS_URI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => console.log("database connected successfully"))
+//   .catch((err) => console.log(err));
+
+const connectDB = async () => {
+  try {
+    await mongoose.set("strictQuery", false);
+    const conn = await mongoose.connect(process.env.ATLAS_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+};
 
 // application routes
 app.use("/exp", exproutes);
@@ -36,6 +50,8 @@ function errorHandler(err, req, res, next) {
 app.use(errorHandler);
 
 // app listener
-app.listen(port, () => {
-  console.log(`listening on port ${port}`);
+connectDB().then(() => {
+  app.listen(port, () => {
+    console.log("listening for requests");
+  });
 });
