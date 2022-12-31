@@ -13,7 +13,7 @@ const uri =
   "mongodb+srv://joy:joy123@expensetracker.a8lrzwj.mongodb.net/expenseTracker?retryWrites=true&w=majority";
 
 // .env variables
-require("dotenv").config({ path: "./config.env" });
+require("dotenv").config({ path: "./.env" });
 const port = process.env.PORT || 5000;
 
 // database connection with mongoose
