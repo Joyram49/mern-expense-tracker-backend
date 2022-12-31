@@ -1,0 +1,41 @@
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const exproutes = require("./routes/exproutes");
+const mongoose = require("mongoose");
+
+// app initialize
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+const uri =
+  "mongodb+srv://joy:joy123@expensetracker.a8lrzwj.mongodb.net/expenseTracker?retryWrites=true&w=majority";
+
+// .env variables
+require("dotenv").config({ path: "./config.env" });
+const port = process.env.PORT || 5000;
+
+// database connection with mongoose
+mongoose.set("strictQuery", false);
+mongoose
+  .connect(process.env.ATLAS_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("database connected successfully"))
+  .catch((err) => console.log(err));
+
+// application routes
+app.use("/exp", exproutes);
+
+// default error handler
+function errorHandler(err, req, res, next) {
+  res.status(5000).json({ error: "request failed!" });
+}
+app.use(errorHandler);
+
+// app listener
+app.listen(port, () => {
+  console.log(`listening on port ${port}`);
+});
